@@ -173,6 +173,9 @@ export default function CropApp() {
 
           <footer className={cn("no-print mt-auto border-t border-border px-4 py-3 text-center text-[10px] text-muted-foreground", presentationMode && "hidden")}>
             C.R.O.P. — Climate and Resource Optimization for Plants · NASA Space Apps 2026 · Illustrative comparison, not an agronomically validated recommendation.
+            <p className="border-t border-border px-4 py-2 text-center text-[11px] font-medium text-muted-foreground">
+              Made by Claude (Super Intelligence)
+            </p>
           </footer>
         </main>
       </div>
