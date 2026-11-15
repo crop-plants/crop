@@ -1,0 +1,211 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* C.R.O.P. design system — dark-green primary theme (spec section 2) */
+  --background: #16221b;
+  --panel: #2e4035;
+  --panel-raised: #3e5648;
+  --sage: #bccc98;
+  --lime: #e9fdbd;
+  --foreground: #ffffff;
+  --muted-foreground: #a8b8a0;
+  --light-card: #e6e9db;
+  --light-card-text: #1f2a24;
+  --ok: #6c9a52;
+  --watch: #e3b341;
+  --alert: #e5604d;
+  --info: #8ec9e8;
+  --border: rgba(188, 204, 152, 0.16);
+  --radius: 16px;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+}
+
+.light {
+  --background: #f2f4ea;
+  --panel: #ffffff;
+  --panel-raised: #ffffff;
+  --sage: #4c6b52;
+  --lime: #3e5648;
+  --foreground: #1f2a24;
+  --muted-foreground: #5c6b5e;
+  --light-card: #e6e9db;
+  --border: rgba(31, 42, 36, 0.14);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-panel: var(--panel);
+  --color-raised: var(--panel-raised);
+  --color-sage: var(--sage);
+  --color-lime: var(--lime);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-ok: var(--ok);
+  --color-watch: var(--watch);
+  --color-alert: var(--alert);
+  --color-info: var(--info);
+  --color-border: var(--border);
+  --radius-card: 16px;
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+
+  /* shadcn/ui token set mapped onto the C.R.O.P. palette */
+  --color-card: var(--panel);
+  --color-card-foreground: var(--foreground);
+  --color-popover: var(--panel-raised);
+  --color-popover-foreground: var(--foreground);
+  --color-primary: var(--lime);
+  --color-primary-foreground: #16221b;
+  --color-secondary: var(--panel-raised);
+  --color-secondary-foreground: var(--foreground);
+  --color-muted: var(--panel);
+  --color-accent: #3a4f41;
+  --color-accent-foreground: var(--foreground);
+  --color-destructive: var(--alert);
+  --color-destructive-foreground: #ffffff;
+  --color-input: var(--border);
+  --color-ring: var(--lime);
+  --color-chart-1: var(--ok);
+  --color-chart-2: var(--watch);
+  --color-chart-3: var(--alert);
+  --color-chart-4: var(--info);
+  --color-chart-5: var(--sage);
+  --color-sidebar: var(--panel);
+  --color-sidebar-foreground: var(--foreground);
+  --color-sidebar-accent: var(--panel-raised);
+  --color-sidebar-border: var(--border);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+.light {
+  --color-muted: #eef1e6;
+  --color-accent: #e6e9db;
+  --color-primary: #2e4035;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* thin, calm scrollbars */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(188, 204, 152, 0.25);
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.card-raised {
+  background: var(--panel-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(10, 18, 12, 0.28);
+}
+
+/* vine wreath loading animation */
+@keyframes wreath-draw {
+  from {
+    stroke-dashoffset: 420;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.wreath-path {
+  stroke-dasharray: 420;
+  animation: wreath-draw 1.6s ease-out forwards;
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.fade-up {
+  animation: fade-up 0.45s ease-out both;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+.shimmer {
+  background: linear-gradient(90deg, rgba(188, 204, 152, 0.08) 25%, rgba(188, 204, 152, 0.2) 37%, rgba(188, 204, 152, 0.08) 63%);
+  background-size: 800px 100%;
+  animation: shimmer 1.3s infinite linear;
+}
+
+/* presentation mode hides chrome */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #ffffff;
+    color: #111111;
+  }
+}
+
+/* maplibre popup theming */
+.maplibregl-popup-content {
+  background: var(--panel-raised) !important;
+  color: var(--foreground) !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--border) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 12px;
+  padding: 10px 12px !important;
+}
+.maplibregl-popup-tip {
+  border-top-color: var(--panel-raised) !important;
+  border-bottom-color: var(--panel-raised) !important;
+}
+.maplibregl-ctrl-group {
+  background: var(--panel) !important;
+}
+.maplibregl-ctrl-group button + button {
+  border-top: 1px solid var(--border) !important;
+}
+.maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+  filter: invert(0.9);
+}

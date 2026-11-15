@@ -1,0 +1,13 @@
+skills/
+node_modules/
+.next/
+dev.log
+server.log
+*.db-journal
+upload/
+tsconfig.tsbuildinfo
+
+.env
+.env.local
+db/
+*.db

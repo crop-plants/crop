@@ -1,0 +1,139 @@
+// C.R.O.P. — Climate and Resource Optimization for Plants
+// Data model (SQLite via Prisma). Provenance is a first-class concern:
+// sensor readings carry measured|simulated; NASA rows carry source + fetchedAt.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Farm {
+  id                          String   @id @default(cuid())
+  name                        String
+  lat                         Float
+  lon                         Float
+  elevationM                  Float    @default(270)
+  polygonGeojson              String? // GeoJSON Polygon of field boundary
+  soilTexture                 String   @default("sandy loam")
+  waterEcDsm                  Float    @default(1.5) // irrigation water EC (dS/m)
+  irrigationAllowanceM3PerAcre Float   @default(1233) // m3 per acre per season
+  irrigationMethod            String   @default("drip") // drip|sprinkler|flood
+  cropHistory                 String   @default("[]") // JSON [{seasonLabel, cropId}]
+  weightsJson                 String   @default("{}") // scoring weights
+  dataMode                    String   @default("demo") // demo|live
+  createdAt                   DateTime @default(now())
+  nodes                       Node[]
+}
+
+model Node {
+  id         String   @id @default(cuid())
+  farmId     String
+  farm       Farm     @relation(fields: [farmId], references: [id])
+  name       String
+  type       String // soil_node | station
+  lat        Float
+  lon        Float
+  apiKeyHash String?
+  batteryV   Float?
+  rssi       Int?
+  lastSeen   DateTime?
+  readings   Reading[]
+  calibrations Calibration[]
+  bioSessions  BioSession[]
+}
+
+model Reading {
+  id         String   @id @default(cuid())
+  nodeId     String
+  node       Node     @relation(fields: [nodeId], references: [id])
+  ts         DateTime
+  sensor     String // moisture|soil_temp|ec|ph|air_temp|air_rh
+  rawValue   Float
+  value      Float
+  unit       String
+  qualityFlag String  @default("ok") // ok|suspect|stuck|out_of_range
+  provenance String   @default("measured") // measured|simulated
+
+  @@index([nodeId, sensor, ts])
+  @@index([ts])
+}
+
+model Calibration {
+  id               String   @id @default(cuid())
+  nodeId           String
+  node             Node     @relation(fields: [nodeId], references: [id])
+  sensor           String
+  method           String
+  coefficientsJson String
+  createdAt        DateTime @default(now())
+}
+
+model ReferenceSample {
+  id     String   @id @default(cuid())
+  sensor String
+  ts     DateTime
+  value  Float
+  note   String?
+}
+
+model BioSession {
+  id           String   @id @default(cuid())
+  nodeId       String?
+  node         Node?    @relation(fields: [nodeId], references: [id])
+  startedAt    DateTime
+  endedAt      DateTime?
+  sampleRateHz Float
+  notes        String?
+  markersJson  String   @default("[]")
+  featuresJson String   @default("{}")
+  waveJson     String? // downsampled demo waveform (SIMULATED)
+}
+
+model ClimateDaily {
+  date     String  @id // YYYYMMDD (UTC)
+  tmax     Float?
+  tmin     Float?
+  tmean    Float?
+  rh       Float?
+  wind2m   Float?
+  solarMj  Float?
+  rainMm   Float?
+  et0Mm    Float?
+  source   String  @default("NASA POWER")
+  fetchedAt DateTime
+}
+
+model NdviObs {
+  id        String  @id @default(cuid())
+  date      String
+  fieldMean Float?
+  cloudFlag String?
+  tilePath  String?
+  source    String
+}
+
+model ScenarioRun {
+  id          String   @id @default(cuid())
+  paramsJson  String
+  resultsJson String
+  createdAt   DateTime @default(now())
+}
+
+model Alert {
+  id           String   @id @default(cuid())
+  ts           DateTime
+  rule         String
+  severity     String // ok|watch|alert
+  message      String
+  acknowledged Boolean  @default(false)
+}
+
+model Setting {
+  key       String @id
+  valueJson String
+}
